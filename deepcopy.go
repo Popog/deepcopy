@@ -1,3 +1,4 @@
+// Package deepcopy implements a deep copy for arbitrary values.
 package deepcopy
 
 import . "reflect"
@@ -7,7 +8,12 @@ type visit struct {
 	typ Type
 }
 
-// Returns a deep copy of the value passed in, copying all elements and exported fields. Note that Chan and Func values are are copied as shallow copies. This result of this function may not compare as equal with reflect.DeepEqual, as Func comparison will return false if both are not nil. Pointer hierarchies are preserved.
+// DeepCopy returns a deep copy of the value passed in, copying all elements and exported
+// fields.
+//
+// Note that Chan and Func values are are copied as shallow copies. This result of this
+// function may not compare as equal with reflect.DeepEqual, as Func comparison will return
+// false if both are not nil. Pointer hierarchies are preserved.
 func DeepCopy(i interface{}) interface{} {
 	if i == nil {
 		return nil
@@ -15,7 +21,12 @@ func DeepCopy(i interface{}) interface{} {
 	return DeepCopyValue(ValueOf(i)).Interface()
 }
 
-// Returns a deep copy of the data contained in the reflect.Value passed in, copying all elements and exported fields. Note that Chan and Func values are are copied as shallow copies. This result of this function may not compare as equal with reflect.DeepEqual, as Func comparison will return false if both are not nil. Pointer hierarchies are preserved.
+// DeepCopyValue returns a deep copy of the data contained in the reflect.Value passed in,
+// copying all elements and exported fields.
+//
+// Note that Chan and Func values are are copied as shallow copies. This result of this
+// function may not compare as equal with reflect.DeepEqual, as Func comparison will return
+// false if both are not nil. Pointer hierarchies are preserved.
 func DeepCopyValue(val Value) Value {
 	return deepCopyValue(val, make(map[visit]Value))
 }
@@ -24,7 +35,9 @@ func deepCopyValue(val Value, visited map[visit]Value) Value {
 	switch typ := val.Type(); typ.Kind() {
 
 	// Just return everything that can be shallow copied
-	case Bool, Int, Int8, Int16, Int32, Int64, Uint, Uint8, Uint16, Uint32, Uint64, Uintptr, Float32, Float64, Complex64, Complex128, Chan, Func, String:
+	case Bool,
+		Int, Int8, Int16, Int32, Int64, Uint, Uint8, Uint16, Uint32, Uint64, Uintptr,
+		Float32, Float64, Complex64, Complex128, Chan, Func, String:
 		return val
 
 	// Deal with the types which can contain references
