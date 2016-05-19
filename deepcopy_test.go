@@ -17,24 +17,16 @@ type DeepEqualTest struct {
 	eq bool
 }
 
-type Node *Node
-
-func Addr(n Node, depth int) Node {
-	for i := 0; i < depth; i++ {
-		n2 := n
-		n = &n2
-	}
-	return n
+type Node struct {
+	Node *Node
 }
 
-func DeepCompare(a, b Node) bool {
-	for a != nil && b != nil {
-		if a == b {
-			return true
-		}
-		a, b = *a, *b
+func Addr(n *Node, depth int) *Node {
+	for i := 0; i < depth; i++ {
+		n2 := *n
+		n = &Node{&n2}
 	}
-	return false
+	return n
 }
 
 // Simple functions for DeepEqual tests.
@@ -43,14 +35,14 @@ var (
 )
 
 var (
-	node1 Node = new(Node)
-	node2 Node = Addr(node1, 1)
-	node3 Node = Addr(node1, 4)
-	node4 Node = Addr(node1, 4)
+	node1 *Node = new(Node)
+	node2 *Node = Addr(node1, 1)
+	node3 *Node = Addr(node1, 4)
+	node4 *Node = Addr(node1, 4)
 )
 
 func init() {
-	*node1 = node3
+	node1 = &Node{node3}
 }
 
 var deepEqualTests = []interface{}{
